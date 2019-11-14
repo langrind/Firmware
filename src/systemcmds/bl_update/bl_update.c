@@ -53,12 +53,17 @@
 
 #include <nuttx/progmem.h>
 
-
-#define BL_FILE_SIZE_LIMIT	16384
+#if defined(CONFIG_ARCH_CHIP_STM32H7)
+#  define BL_FILE_SIZE_LIMIT	128*1024
+#else
+#  define BL_FILE_SIZE_LIMIT  16384
+#endif
 
 __EXPORT int bl_update_main(int argc, char *argv[]);
 
-#if defined (CONFIG_STM32_STM32F4XXX) || defined (CONFIG_ARCH_CHIP_STM32F7)
+#if defined (CONFIG_STM32_STM32F4XXX) || defined (CONFIG_ARCH_CHIP_STM32F7) || \
+    defined (CONFIG_ARCH_CHIP_STM32H7)
+
 static int setopt(void);
 
 static void print_usage(const char *reason)
@@ -81,7 +86,8 @@ static void print_usage(const char *reason)
 int
 bl_update_main(int argc, char *argv[])
 {
-#if !(defined (CONFIG_STM32_STM32F4XXX) || defined (CONFIG_ARCH_CHIP_STM32F7))
+#if !(defined (CONFIG_STM32_STM32F4XXX) || defined (CONFIG_ARCH_CHIP_STM32F7) \
+    || defined (CONFIG_ARCH_CHIP_STM32H7))
 	PX4_ERR("Not supported on this HW");
 	return 1;
 }
